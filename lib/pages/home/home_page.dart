@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mytodolist/db/todo_db.dart';
 import 'package:mytodolist/pages/home/components/todo_tile.dart';
 import 'package:mytodolist/utils/dialog_box.dart';
 
@@ -12,13 +14,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<HomePage> {
-  final TextEditingController _controller = TextEditingController();
-  List todoList = [
-    ['Task 1', false],
-    ['Task 2', true],
-    ['Task 3', false],
-  ];
+  // reference to the box opened in main.dart
+  final _box = Hive.box('todo_box');
+  ToDoDb db = ToDoDb();
 
+  // input controller
+  final TextEditingController _controller = TextEditingController();
+  
+  @override
+  void initState() {
+    if (_box.get('todo_list') == null) {
+      db.createInitData();
+    } else {
+      db.loadData();
+    }
+
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +41,11 @@ class _MyHomePageState extends State<HomePage> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.only(top: 24),
-        itemCount: todoList.length,
+        itemCount: db.toDoList.length,
         itemBuilder: (context, index) {
           return TodoTile(
-            taskName: todoList[index][0],
-            taskCompleted: todoList[index][1],
+            taskName: db.toDoList[index][0],
+            taskCompleted: db.toDoList[index][1],
             onChanged: (value) {
               _checkboxOnChange(value, index);
             },
@@ -49,16 +62,20 @@ class _MyHomePageState extends State<HomePage> {
 
   _checkboxOnChange(bool? value, int index) {
     setState(() {
-      todoList[index][1] = value!;
+      db.toDoList[index][1] = value!;
     });
+
+    db.updateData();
   }
 
   void _saveNewTask() {
     Navigator.pop(context);
     setState(() {
-      todoList.add([_controller.text, false]);
+      db.toDoList.add([_controller.text, false]);
       _controller.clear();
     });
+
+    db.updateData();
   }
 
   void _addTask() {

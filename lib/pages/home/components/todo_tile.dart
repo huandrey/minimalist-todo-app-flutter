@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mytodolist/utils/extensions.dart';
 
 class TodoTile extends StatelessWidget {
   final String taskName;
@@ -30,7 +31,7 @@ class TodoTile extends StatelessWidget {
               checkColor: Colors.yellow.shade600,
             ),
             Text(
-              taskName, 
+                taskName.truncateTo(36), 
               style: TextStyle(
                 color: Colors.grey.shade200,
                 decoration: taskCompleted ? TextDecoration.lineThrough : null,
