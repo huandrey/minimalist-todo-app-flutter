@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true, colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.yellow.shade700,
+          seedColor: const Color.fromRGBO(251, 192, 45, 1),
           ).copyWith(
             background: Colors.grey.shade900,
           ),
